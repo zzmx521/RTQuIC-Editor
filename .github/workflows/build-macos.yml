@@ -21,13 +21,20 @@ jobs:
           python-version: '3.12'
 
       - name: Build DMG
+        shell: bash
         run: |
-          chmod +x build_macos.sh
-          ./build_macos.sh
+          build_script="$(find "$GITHUB_WORKSPACE" -type f -name build_macos.sh -print -quit)"
+          if [[ -z "$build_script" ]]; then
+            echo "Error: build_macos.sh was not found in the repository."
+            exit 1
+          fi
+          echo "Using build script: $build_script"
+          chmod +x "$build_script"
+          "$build_script"
 
       - name: Upload DMG
         uses: actions/upload-artifact@v4
         with:
           name: RT-QuIC-Editor-v2.2-macOS
-          path: release/*.dmg
+          path: '**/release/*.dmg'
           if-no-files-found: error
