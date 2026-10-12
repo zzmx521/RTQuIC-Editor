@@ -1,0 +1,33 @@
+# Visible copy of the GitHub Actions workflow.
+# On GitHub, this file must be located at:
+# .github/workflows/build-macos.yml
+
+name: Build macOS DMG
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build DMG
+        run: |
+          chmod +x build_macos.sh
+          ./build_macos.sh
+
+      - name: Upload DMG
+        uses: actions/upload-artifact@v4
+        with:
+          name: RT-QuIC-Editor-v2.2-macOS
+          path: release/*.dmg
+          if-no-files-found: error
